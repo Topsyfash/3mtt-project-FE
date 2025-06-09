@@ -7,7 +7,9 @@ const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [reviewText, setReviewText] = useState('');
-  const [rating,setRating] = useState('')
+  const [rating, setRating] = useState('')
+  const [trailer, setTrailer] = useState(null);
+
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -19,7 +21,18 @@ const MovieDetails = () => {
       }
     };
 
+
+    const fetchTrailer = async () => {
+      try {
+        const { data } = await API.get(`/movies/${id}/trailer`);
+        setTrailer(data.trailer);
+      } catch {
+        console.log('Trailer not available');
+      }
+    };
+
     fetchMovie();
+    fetchTrailer()
   }, [id]);
 
   const handleAdd = async (type) => {
@@ -34,13 +47,13 @@ const MovieDetails = () => {
 
       toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`);
 
-       if (type === 'reviews') {
-      setReviewText('');
-      setRating('');
-    }
+      if (type === 'reviews') {
+        setReviewText('');
+        setRating('');
+      }
     } catch (error) {
       const message = error.response?.data?.message || `Failed to add to ${type}`;
-    toast.error(message);
+      toast.error(message);
     }
   };
 
@@ -49,6 +62,7 @@ const MovieDetails = () => {
   return (
     <>
       <div className="max-w-4xl mx-auto px-4 py-8">
+        
         <div className="flex flex-col md:flex-row gap-6">
           {movie.poster_path && (
             <img
@@ -98,9 +112,9 @@ const MovieDetails = () => {
                 type="number"
                 className='border rounded p-1 m-2'
                 placeholder="Add Rating (1-5)"
-                 value={rating}
+                value={rating}
                 onChange={(e) => setRating(e.target.value)}
-                />
+              />
               <button
                 onClick={() => handleAdd('reviews')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
@@ -109,8 +123,26 @@ const MovieDetails = () => {
               </button>
             </div>
 
+           
+
           </div>
         </div>
+
+         {trailer && trailer.site === 'YouTube' && (
+              <div className="mt-10">
+                <h3 className="text-xl font-semibold mb-2">Watch Trailer</h3>
+                <div className="aspect-w-16 aspect-h-9">
+                  <iframe
+                    title="Movie Trailer"
+                    src={`https://www.youtube.com/embed/${trailer.key}`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-[300px] md:h-[400px] rounded-lg shadow-md"
+                  ></iframe>
+                </div>
+              </div>
+            )}
       </div>
     </>
   );
