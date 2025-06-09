@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from '../services/api';
 import { Link } from 'react-router-dom';
+import toast from "react-hot-toast";
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
@@ -10,7 +11,7 @@ const Favorites = () => {
       const { data } = await API.get('/favorites');
       setFavorites(data || []);
     } catch {
-      alert('Failed to fetch favorites');
+      toast.error('Failed to fetch favorites');
     }
   };
 
@@ -22,8 +23,9 @@ const Favorites = () => {
     try {
       await API.delete(`/favorites/${id}`);
       setFavorites((prev) => prev.filter((item) => item.id !== id));
+      toast.success("Favorite Deleted successfully")
     } catch {
-      alert('Failed to delete favorite');
+      toast.error('Failed to delete favorite');
     }
   };
 
@@ -34,7 +36,7 @@ const Favorites = () => {
         {favorites.length === 0 ? (
           <p className="text-gray-600">No favorite movies found.</p>
         ) : (
-          <div className="flex flex-wrap gap-6 justify-center md:justify-start">
+          <div className="flex flex-wrap gap-6 justify-items-start md:justify-start">
             {favorites.map((fav) => (
               <div
                 key={fav.id}

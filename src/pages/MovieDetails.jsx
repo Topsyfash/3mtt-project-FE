@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../services/api';
-import Navbar from '../components/Navbar/Navbar';
+import toast from 'react-hot-toast';
 
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [reviewText, setReviewText] = useState('');
-  const [message, setMessage] = useState('');
   const [rating,setRating] = useState('')
 
   useEffect(() => {
@@ -16,7 +15,7 @@ const MovieDetails = () => {
         const { data } = await API.get(`/movies/${id}`);
         setMovie(data.movie || data);
       } catch {
-        setMessage('Failed to load movie details');
+        toast.error('Failed to load movie details');
       }
     };
 
@@ -32,9 +31,16 @@ const MovieDetails = () => {
       };
 
       await API.post(`/${type}`, body);
-      setMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`);
-    } catch {
-      setMessage(`Failed to add to ${type}`);
+
+      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`);
+
+       if (type === 'reviews') {
+      setReviewText('');
+      setRating('');
+    }
+    } catch (error) {
+      const message = error.response?.data?.message || `Failed to add to ${type}`;
+    toast.error(message);
     }
   };
 
@@ -103,9 +109,6 @@ const MovieDetails = () => {
               </button>
             </div>
 
-            {message && (
-              <p className="mt-4 text-green-600 font-medium">{message}</p>
-            )}
           </div>
         </div>
       </div>

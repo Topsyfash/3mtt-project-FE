@@ -12,10 +12,12 @@ import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import Logout from "./pages/Logout";
 import Navbar from "./components/Navbar/Navbar";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }}/>
       <Router>
         <Navbar/>
         <Routes>

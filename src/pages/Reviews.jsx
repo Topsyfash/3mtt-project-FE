@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from '../services/api';
 import { Link } from 'react-router-dom';
+import toast from "react-hot-toast";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -8,15 +9,16 @@ const Reviews = () => {
   useEffect(() => {
     API.get('/reviews')
       .then(({ data }) => setReviews(data.reviews || []))
-      .catch(() => alert('Failed to fetch reviews'));
+      .catch(() => toast.error('Failed to fetch reviews'));
   }, []);
     
   const handleDelete = async (movieId) => {
     try {
       await API.delete(`/reviews/${movieId}`);
       setReviews((prev) => prev.filter((r) => r.movieId !== movieId));
+      toast.success("Review Deleted successfully")
     } catch {
-      alert('Failed to delete review');
+      toast.error('Failed to delete review');
     }
   };
 

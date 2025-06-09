@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import API from '../services/api';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 const Home = () => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    // const [error, setError] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [query, setQuery] = useState('');
     const [year, setYear] = useState('');
@@ -18,7 +19,8 @@ const Home = () => {
                 const { data } = await API.get('/movies/popular');
                 setMovies(data.movies || []);
             } catch (error) {
-                setError('Failed to load popular movies', error);
+                toast.error(error.response?.data?.message || 'Failed to load popular movies');
+
             } finally {
                 setLoading(false);
             }
@@ -32,13 +34,20 @@ const Home = () => {
         if (!query.trim()) return;
 
         setSearching(true);
+
+  const searchPromise = API.get('/movies/search', { params: { query, year } });
+
+  toast.promise(searchPromise, {
+    loading: 'Searching movies...',
+    success: 'Movies loaded successfully!',
+    error: 'Search failed',
+  });
+
         try {
-            const { data } = await API.get(`/movies/search`, {
-                params: { query, year }
-            });
+            const { data } = await searchPromise;
             setSearchResults(data.movies || []);
         } catch {
-            setError('Search failed');
+            toast.error('Search failed');
         } finally {
             setSearching(false);
         }
@@ -92,7 +101,7 @@ const Home = () => {
                     </div>
 
                     {searching && <p className="text-blue-500">Searching...</p>}
-                    {error && <p className="text-red-500">{error}</p>}
+                    
 
                     {searchResults.length > 0 ? (
                         <>
