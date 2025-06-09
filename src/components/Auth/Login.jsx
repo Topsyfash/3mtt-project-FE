@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import API from '../../services/api.js';
 import { AuthContext } from '../../context/AuthContext.jsx';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -17,16 +18,17 @@ const Login = () => {
       const { data } = await API.post('/auth/login', form);
       login(data.user, data.token);
       navigate('/');
+      toast.success("Login successful")
     } catch (err) {
-      alert('Login failed: ' + err?.response?.data?.message || err.message);
+      toast.error('Login failed: ' + err?.response?.data?.message || err.message);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="flex items-center justify-center bg-gray-100 px-4 min-h-[60vh] sm:min-h-[80vh]">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm bg-white p-6 rounded-xl shadow-md"
+        className="bg-white p-4 sm:p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
       >
         <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
           Login
@@ -56,6 +58,10 @@ const Login = () => {
         >
           Login
         </button>
+        <p>New User? <Link
+          to={`/register`}
+          className='text-blue-500 hover:text-blue-700'
+        >Register Here</Link></p>
       </form>
     </div>
   );

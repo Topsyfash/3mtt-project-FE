@@ -29,7 +29,7 @@ const Watchlist = () => {
         {watchlist.length === 0 ? (
           <p className="text-gray-600">No movies in your watchlist yet.</p>
         ) : (
-          <div className="flex flex-wrap gap-6 justify-items-start md:justify-start">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {watchlist.map((item) => (
               <div
                 key={item.id}

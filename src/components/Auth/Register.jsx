@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import API from '../../services/api.js';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Register = () => {
     const [form, setForm] = useState({ userName: '', email: '', password: '' });
@@ -12,18 +13,18 @@ const Register = () => {
         e.preventDefault();
         try {
             await API.post('/auth/register', form);
-            alert('Registration successful. You can now login.');
+            toast.success('Registration successful. You can now login.');
 navigate("/login")
         } catch (err) {
-            alert('Registration failed: ' + err?.response?.data?.message || 'An error occurred');
+            toast.error('Registration failed: ' + err?.response?.data?.message || 'An error occurred');
         }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center bg-gray-100 min-h-[60vh] sm:min-h-[80vh]">
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
+                className="bg-white p-4 sm:p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
             >
                 <h2 className="text-2xl font-bold text-center text-gray-800">Register</h2>
 
@@ -56,6 +57,10 @@ navigate("/login")
                 >
                     Register
                 </button>
+                <p>Already Registered? <Link
+          to={`/login`}
+          className='text-blue-500 hover:text-blue-700'
+        >Login Here</Link></p>
             </form>
         </div>
     );
