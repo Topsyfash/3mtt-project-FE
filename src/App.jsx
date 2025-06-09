@@ -17,7 +17,7 @@ import { Toaster } from "react-hot-toast";
 function App() {
   return (
     <AuthProvider>
-      <Toaster position="top-right" toastOptions={{ duration: 3000 }}/>
+      <Toaster position="top-right" toastOptions={{ duration: 2000 }}/>
       <Router>
         <Navbar/>
         <Routes>

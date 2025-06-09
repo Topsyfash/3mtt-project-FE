@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import API from "../services/api";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const [user, setUser] = useState({ userName: "", email: "" });
   const [form, setForm] = useState({ userName: "", email: "" });
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("info"); // 'success', 'error', 'info'
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -17,8 +17,7 @@ const Profile = () => {
           email: data.user?.email || "",
         });
       } catch {
-        setMessage("Failed to load profile");
-        setMessageType("error");
+        toast.error("Failed to load profile");
       }
     };
 
@@ -36,35 +35,22 @@ const Profile = () => {
     if (form.userName !== user.userName) payload.userName = form.userName;
 
     if (Object.keys(payload).length === 0) {
-      setMessage("No changes made");
-      setMessageType("info");
+      toast("No changes made");
       return;
     }
 
     try {
       await API.patch("/user/profile", payload);
-      setMessage("Profile updated successfully!");
-      setMessageType("success");
+      toast.success("Profile updated successfully!");
       setUser((prev) => ({ ...prev, ...payload }));
     } catch {
-      setMessage("Failed to update profile");
-      setMessageType("error");
+      toast.error("Failed to update profile");
     }
   };
 
-  const getMessageColor = () => {
-    switch (messageType) {
-      case "success":
-        return "text-green-600";
-      case "error":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
-  };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+    <div className="flex items-center justify-center bg-gray-100 px-4 min-h-[60vh] sm:min-h-[80vh]">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-4 text-center">Edit Profile</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -95,11 +81,7 @@ const Profile = () => {
             Update Profile
           </button>
         </form>
-        {message && (
-          <p className={`mt-4 text-center text-sm font-medium ${getMessageColor()}`}>
-            {message}
-          </p>
-        )}
+        
       </div>
     </div>
   );
