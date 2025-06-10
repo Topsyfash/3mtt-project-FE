@@ -12,6 +12,8 @@ const Home = () => {
     const [query, setQuery] = useState('');
     const [year, setYear] = useState('');
     const [searching, setSearching] = useState(false);
+    const [recommended, setRecommended] = useState([]);
+
 
     useEffect(() => {
         const fetchPopular = async () => {
@@ -26,7 +28,13 @@ const Home = () => {
             }
         };
 
+        const fetchReccomendations = async () => {
+            const { data } = await API.get('/movies/recommendations');
+            setRecommended(data.movies || []);
+        }
+
         fetchPopular();
+        fetchReccomendations()
     }, []);
 
     const handleSearch = async (e) => {
@@ -35,13 +43,13 @@ const Home = () => {
 
         setSearching(true);
 
-  const searchPromise = API.get('/movies/search', { params: { query, year } });
+        const searchPromise = API.get('/movies/search', { params: { query, year } });
 
-  toast.promise(searchPromise, {
-    loading: 'Searching movies...',
-    success: 'Movies loaded successfully!',
-    error: 'Search failed',
-  });
+        toast.promise(searchPromise, {
+            loading: 'Searching movies...',
+            success: 'Movies loaded successfully!',
+            error: 'Search failed',
+        });
 
         try {
             const { data } = await searchPromise;
@@ -101,7 +109,7 @@ const Home = () => {
                     </div>
 
                     {searching && <p className="text-blue-500">Searching...</p>}
-                    
+
 
                     {searchResults.length > 0 ? (
                         <>
@@ -114,6 +122,19 @@ const Home = () => {
                             {loading ? <p>Loading...</p> : renderMovies(movies)}
                         </>
                     )}
+
+                    {!searchResults.length && recommended.length > 0 && (
+                        <>
+                            <h3 className="text-xl font-semibold mt-8 mb-4">Recommended for You</h3>
+
+                            {recommended.length > 0 ? (
+                                renderMovies(recommended)
+                            ) : (
+                                <p className="text-gray-600">Add some favorites to see recommendations.</p>
+                            )}
+                        </>
+                    )}
+
                 </div>
             </div>
         </>
