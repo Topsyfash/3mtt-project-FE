@@ -13,8 +13,11 @@ import PrivateRoute from "./components/PrivateRoute";
 import Logout from "./pages/Logout";
 import Navbar from "./components/Navbar/Navbar";
 import { Toaster } from "react-hot-toast";
+import useTokenCheck from "./hooks/useTokenCheck";
 
 function App() {
+
+  useTokenCheck()
   return (
     <AuthProvider>
       <Toaster position="top-right" toastOptions={{ duration: 2000 }}/>
