@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 const Home = () => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [query, setQuery] = useState('');
     const [year, setYear] = useState('');
@@ -19,7 +18,9 @@ const Home = () => {
         const fetchPopular = async () => {
             try {
                 const { data } = await API.get('/movies/popular');
-                setMovies(data.movies || []);
+                setMovies(
+                    data.movies
+                );
             } catch (error) {
                 toast.error(error.response?.data?.message || 'Failed to load popular movies');
 
@@ -30,7 +31,9 @@ const Home = () => {
 
         const fetchReccomendations = async () => {
             const { data } = await API.get('/movies/recommendations');
-            setRecommended(data.movies || []);
+            setRecommended(
+                data.movies,
+            );
         }
 
         fetchPopular();
@@ -53,7 +56,9 @@ const Home = () => {
 
         try {
             const { data } = await searchPromise;
-            setSearchResults(data.movies || []);
+            setSearchResults(
+                data.movies,
+            );
         } catch {
             toast.error('Search failed');
         } finally {
@@ -62,8 +67,11 @@ const Home = () => {
     };
 
     const renderMovies = (movieList) => (
+        
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {movieList.map((movie) => (
+            
+            {movieList.map((movie) => {
+                return(
                 <div key={movie.id} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition-all">
                     <Link to={`/movie/${movie.id}`}>
                         <img
@@ -73,11 +81,15 @@ const Home = () => {
                         />
                         <div className="p-2">
                             <h4 className="font-semibold text-lg truncate">{movie.title}</h4>
-                            {movie.release_date && <p className="text-sm text-gray-500">{movie.release_date}</p>}
+                            {movie.releaseYear && <p className="text-sm text-gray-500">Year: {movie.releaseYear}</p>}
+                            {movie.imdbRating && <p className="text-sm text-yellow-600">IMDb: ⭐ {movie.imdbRating}</p>}
+                
                         </div>
-                    </Link>
-                </div>
-            ))}
+                        </Link>
+                        
+                    </div>
+                )
+            })}
         </div>
     );
 

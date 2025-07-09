@@ -15,7 +15,11 @@ const MovieDetails = () => {
     const fetchMovie = async () => {
       try {
         const { data } = await API.get(`/movies/${id}`);
-        setMovie(data.movie || data);
+        setMovie({
+          ...data.movie,
+              imdbRating: data.imdbRating,
+        omdbReleaseYear: data.releaseYear,
+        });
       } catch {
         toast.error('Failed to load movie details');
       }
@@ -73,11 +77,19 @@ const MovieDetails = () => {
           )}
           <div>
             <h2 className="text-3xl font-bold mb-2">{movie.title}</h2>
-            {movie.release_date && (
+
+            {movie.imdbRating && (
+  <p className="text-gray-500 mb-1">
+    <strong>IMDb Rating:</strong> ⭐ {movie.imdbRating}
+  </p>
+            )}
+            
+            {movie.omdbReleaseYear && (
               <p className="text-gray-500 mb-1">
-                <strong>Release Date:</strong> {movie.release_date}
+                <strong>Release Year:</strong> {movie.omdbReleaseYear}
               </p>
             )}
+
             {movie.genre && (
               <p className="text-gray-500 mb-3">
                 <strong>Genre:</strong> {movie.genre}
